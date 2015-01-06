@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 namespace ErrorHandling
@@ -131,6 +132,14 @@ namespace ErrorHandling
 				var maxValue = int.MaxValue;
 				var _ = maxValue * maxValue;
 			}
+		}
+
+		[Test]
+		[ExpectedException(typeof (AggregateException))]
+		public void Aggregate()
+		{
+			var task = Task.Run(() => { throw new Exception(); });
+			task.Wait();
 		}
 
 		public IEnumerator GetEnumerator()
