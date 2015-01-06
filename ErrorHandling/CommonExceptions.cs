@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using NUnit.Framework;
 
 namespace ErrorHandling
 {
-	public class CommonExceptions
+	public class CommonExceptions: IDisposable
 	{
 		[Test]
 		[ExpectedException(typeof (InvalidOperationException))]
@@ -62,5 +63,79 @@ namespace ErrorHandling
 		{
 			var _ = new decimal[int.MaxValue];
 		}
+
+		[Test]
+		[ExpectedException(typeof (DivideByZeroException))]
+		public void DivideByZero()
+		{
+			var dividend = 1;
+			var divisor = 0;
+			var _ = dividend/divisor;
+		}
+
+		[Test]
+		[ExpectedException(typeof (FileNotFoundException))]
+		public void FileNotFound()
+		{
+			File.Open(Guid.NewGuid().ToString(), FileMode.Open);
+		}
+
+		[Test]
+		[ExpectedException(typeof (FormatException))]
+		public void Format()
+		{
+			DateTime.Parse("never");
+		}
+
+		[Test]
+		[ExpectedException(typeof (KeyNotFoundException))]
+		public void KeyNotFound()
+		{
+			var dict = new Dictionary<object, object>();
+			var _ = dict[0];
+		}
+
+		[Test]
+		[ExpectedException(typeof (NotImplementedException))]
+		public void NotImplemented()
+		{
+			Dispose();
+		}
+
+		public void Dispose()
+		{
+			throw new NotImplementedException();
+		}
+
+		[Test]
+		[ExpectedException(typeof(NotSupportedException))]
+		public void NotSupported()
+		{
+			using (var stream = File.OpenWrite("writeonly"))
+			{
+				stream.ReadByte();
+			}
+		}
+
+		[Test]
+		[ExpectedException(typeof(ObjectDisposedException))]
+		public void ObjectDisposed()
+		{
+			var stream = File.OpenWrite("writeonly");
+			stream.Dispose();
+			stream.Flush();
+		}
+
+		[Test]
+		[ExpectedException(typeof(OverflowException))]
+		public void Overflow()
+		{
+			checked
+			{
+				var maxValue = int.MaxValue;
+				var _ = maxValue * maxValue;
+			}
+		}
+
 	}
 }
