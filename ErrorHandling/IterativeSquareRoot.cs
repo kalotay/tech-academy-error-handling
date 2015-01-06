@@ -27,5 +27,26 @@ namespace ErrorHandling
 			var actual = SquareRoot(x);
 			Assert.That(actual, Is.EqualTo(expected).Within(0.01));
 		}
+
+		[Test, Ignore]
+		public void NegativeRoot()
+		{
+			var x = SquareRoot(-1);
+			Assert.That(x, Is.InRange(0, double.MaxValue));
+		}
+
+		[Test, Ignore]
+		public void InvalidGuess()
+		{
+			var x = SquareRoot(1, 0);
+			Assert.That(x, Is.InRange(0, double.MaxValue));
+		}
+
+		[Test, Ignore]
+		public void InvalidIterations()
+		{
+			var x = SquareRoot(1, -1, -1);
+			Assert.That(x, Is.InRange(0, double.MaxValue));
+		}
 	}
 }
