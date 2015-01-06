@@ -6,7 +6,8 @@ using NUnit.Framework;
 
 namespace ErrorHandling
 {
-	public class CommonExceptions: IDisposable
+	[TestFixture]
+	public class CommonExceptions: IEnumerable
 	{
 		[Test]
 		[ExpectedException(typeof (InvalidOperationException))]
@@ -99,12 +100,7 @@ namespace ErrorHandling
 		[ExpectedException(typeof (NotImplementedException))]
 		public void NotImplemented()
 		{
-			Dispose();
-		}
-
-		public void Dispose()
-		{
-			throw new NotImplementedException();
+			GetEnumerator();
 		}
 
 		[Test]
@@ -137,5 +133,9 @@ namespace ErrorHandling
 			}
 		}
 
+		public IEnumerator GetEnumerator()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
