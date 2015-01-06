@@ -6,17 +6,13 @@ namespace ErrorHandling
 	[TestFixture]
 	public class ExceptionHandling
 	{
-		public class CustomException: Exception
-		{
-			public CustomException(Exception exception):base("custom", exception)
-			{}
-
-			public CustomException()
-			{}
-		}
-
 		public class DerivedCustomException: CustomException
 		{}
+
+		private static void Throw()
+		{
+			throw new CustomException();
+		}
 
 		[Test]
 		public void CatchAll()
@@ -145,11 +141,6 @@ namespace ErrorHandling
 			{
 				throw;
 			}
-		}
-
-		private static void Throw()
-		{
-			throw new CustomException();
 		}
 	}
 }
