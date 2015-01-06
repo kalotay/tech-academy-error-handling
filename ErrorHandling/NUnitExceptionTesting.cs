@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace ErrorHandling
 {
 	[TestFixture]
-	public class NunitException
+	public class NUnitExceptionTesting
 	{
 		[Test]
 		[ExpectedException(typeof (CustomException))]

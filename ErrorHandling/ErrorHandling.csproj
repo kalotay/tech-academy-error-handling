@@ -48,7 +48,7 @@
     <Compile Include="ExceptionHandling.cs" />
     <Compile Include="FinallyBehaviour.cs" />
     <Compile Include="IterativeSquareRoot.cs" />
-    <Compile Include="NunitException.cs" />
+    <Compile Include="NUnitExceptionTesting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
