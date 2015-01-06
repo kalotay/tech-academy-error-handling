@@ -1,0 +1,56 @@
+﻿using System;
+using NUnit.Framework;
+
+namespace ErrorHandling
+{
+	[TestFixture]
+	public class NunitException
+	{
+		[Test]
+		[ExpectedException(typeof (CustomException))]
+		public void ExpectedExceptionAttribute()
+		{
+			Throw();
+		}
+
+		[Test]
+		public void ThrowsMethod()
+		{
+			var exception = Assert.Throws<CustomException>(Throw);
+			Assert.That(exception.InnerException, Is.Null);
+		}
+
+		[Test]
+		public void CatchMethod()
+		{
+			var exception = Assert.Catch<CustomException>(Throw);
+			Assert.That(exception.InnerException, Is.Null);
+		}
+
+		[Test]
+		public void ThrowsConstraint()
+		{
+			Assert.That(Throw, Throws.TypeOf<CustomException>().With.InnerException.Null);
+		}
+
+		[Test]
+		[ExpectedException]
+		public void ThrowsMethodBaseException()
+		{
+			var exception = Assert.Throws<Exception>(Throw);
+			Assert.That(exception.InnerException, Is.Null);
+		}
+
+		[Test]
+		public void CatchMethodBaseException()
+		{
+			var exception = Assert.Catch<Exception>(Throw);
+			Assert.That(exception.InnerException, Is.Null);
+		}
+
+		private static void Throw()
+		{
+			throw new CustomException();
+		}
+	}
+}
