@@ -15,15 +15,106 @@ namespace ErrorHandling
 	[TestFixture]
 	public class CommonExceptions: IEnumerable
 	{
+		#region operational
+
 		[Test]
-		[ExpectedException(typeof (InvalidOperationException))]
+		[ExpectedException(typeof(AggregateException))]
+		public void Aggregate()
+		{
+			var succesfulTask = Task.Run(() => { });
+			var failingTask = Task.Run(() => { throw new CustomException(); });
+			var tasks = Task.WhenAll(succesfulTask, failingTask);
+			tasks.Wait();
+		}
+
+		[Test]
+		[ExpectedException(typeof(WebException))]
+		public void Web()
+		{
+			var request = WebRequest.Create("http://localhost:10000");
+			using (request.GetResponse())
+			{ }
+		}
+
+		[Test]
+		[ExpectedException(typeof(SocketException))]
+		public void Socket()
+		{
+			using (var socket = new Socket(SocketType.Stream, ProtocolType.IP))
+			{
+				socket.Connect("localhost", 10000);
+			}
+		}
+
+		[Test]
+		[ExpectedException(typeof(SqlException))]
+		public void Sql()
+		{
+			var builder = new SqlConnectionStringBuilder
+			{
+				DataSource = "(local)",
+				UserID = "bob",
+				Password = "hunter2",
+				InitialCatalog = "Adventure Works"
+			};
+			var connectionString = builder.ToString();
+			using (var connection = new SqlConnection(connectionString))
+			{
+				connection.Open();
+			}
+		}
+
+		[Test]
+		[ExpectedException(typeof(XmlException))]
+		public void Xml()
+		{
+			XDocument.Parse("{}");
+		}
+
+		#endregion
+
+		#region programmatic
+
+		[Test]
+		[ExpectedException(typeof(NullReferenceException))]
+		public void NullReference()
+		{
+			object obj = null;
+			obj.ToString();
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void ArgumentNull()
+		{
+			new Hashtable { { null, "a" } };
+		}
+
+		[Test]
+		[ExpectedException(typeof(InvalidOperationException))]
 		public void InvalidOperation()
 		{
-			var list = new List<object> {"a"};
+			var list = new List<object> { "a" };
 			foreach (var item in list)
 			{
 				list.Add(item);
 			}
+		}
+
+		[Test]
+		[ExpectedException(typeof(ObjectDisposedException))]
+		public void ObjectDisposed()
+		{
+			var stream = File.OpenWrite("writeonly");
+			stream.Dispose();
+			stream.Flush();
+		}
+
+		[Test]
+		[ExpectedException(typeof(FormatException))]
+		public void Format()
+		{
+			DateTime.Parse("never");
 		}
 
 		[Test]
@@ -35,21 +126,6 @@ namespace ErrorHandling
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
-		public void ArgumentNull()
-		{
-			new Hashtable {{null, "a"}};
-		}
-
-		[Test]
-		[ExpectedException(typeof(NullReferenceException))]
-		public void NullReference()
-		{
-			object obj = null;
-			obj.ToString();
-		}
-
-		[Test]
 		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexOutOfRange()
 		{
@@ -57,45 +133,8 @@ namespace ErrorHandling
 			var _ = list[0];
 		}
 
-		[Test, Ignore("crashes test runner")]
-		[ExpectedException(typeof (StackOverflowException))]
-		public void StackOverflow()
-		{
-			StackOverflow();
-		}
-
 		[Test]
-		[ExpectedException(typeof (OutOfMemoryException))]
-		public void OutOfMemory()
-		{
-			var _ = new decimal[int.MaxValue];
-		}
-
-		[Test]
-		[ExpectedException(typeof (DivideByZeroException))]
-		public void DivideByZero()
-		{
-			var dividend = 1;
-			var divisor = 0;
-			var _ = dividend/divisor;
-		}
-
-		[Test]
-		[ExpectedException(typeof (FileNotFoundException))]
-		public void FileNotFound()
-		{
-			File.Open(Guid.NewGuid().ToString(), FileMode.Open);
-		}
-
-		[Test]
-		[ExpectedException(typeof (FormatException))]
-		public void Format()
-		{
-			DateTime.Parse("never");
-		}
-
-		[Test]
-		[ExpectedException(typeof (KeyNotFoundException))]
+		[ExpectedException(typeof(KeyNotFoundException))]
 		public void KeyNotFound()
 		{
 			var dict = new Dictionary<object, object>();
@@ -103,7 +142,27 @@ namespace ErrorHandling
 		}
 
 		[Test]
-		[ExpectedException(typeof (NotImplementedException))]
+		[ExpectedException(typeof(DivideByZeroException))]
+		public void DivideByZero()
+		{
+			var dividend = 1;
+			var divisor = 0;
+			var _ = dividend / divisor;
+		}
+
+		[Test]
+		[ExpectedException(typeof(OverflowException))]
+		public void Overflow()
+		{
+			checked
+			{
+				var maxValue = int.MaxValue;
+				var _ = maxValue * maxValue;
+			}
+		}
+
+		[Test]
+		[ExpectedException(typeof(NotImplementedException))]
 		public void NotImplemented()
 		{
 			GetEnumerator();
@@ -120,78 +179,30 @@ namespace ErrorHandling
 		}
 
 		[Test]
-		[ExpectedException(typeof(ObjectDisposedException))]
-		public void ObjectDisposed()
+		[ExpectedException(typeof(AssertionException))]
+		public void NUnitUsesExceptions()
 		{
-			var stream = File.OpenWrite("writeonly");
-			stream.Dispose();
-			stream.Flush();
+			Assert.Fail();
 		}
 
+		#endregion
+
+		#region environmental
 		[Test]
-		[ExpectedException(typeof(OverflowException))]
-		public void Overflow()
+		[ExpectedException(typeof(OutOfMemoryException))]
+		public void OutOfMemory()
 		{
-			checked
-			{
-				var maxValue = int.MaxValue;
-				var _ = maxValue * maxValue;
-			}
+			var _ = new decimal[int.MaxValue];
 		}
 
-		[Test]
-		[ExpectedException(typeof (AggregateException))]
-		public void Aggregate()
+		[Test, Ignore("crashes test runner")]
+		[ExpectedException(typeof(StackOverflowException))]
+		public void StackOverflow()
 		{
-			var succesfulTask = Task.Run(() => { });
-			var failingTask = Task.Run(() => { throw new CustomException(); });
-			var tasks = Task.WhenAll(succesfulTask, failingTask);
-			tasks.Wait();
+			StackOverflow();
 		}
 
-		[Test]
-		[ExpectedException(typeof (WebException))]
-		public void Web()
-		{
-			var request = WebRequest.Create("http://localhost:10000");
-			using (request.GetResponse())
-			{}
-		}
-
-		[Test]
-		[ExpectedException(typeof (SocketException))]
-		public void Socket()
-		{
-			using (var socket = new Socket(SocketType.Stream, ProtocolType.IP))
-			{
-				socket.Connect("localhost", 10000);
-			}
-		}
-
-		[Test]
-		[ExpectedException(typeof (SqlException))]
-		public void Sql()
-		{
-			var builder = new SqlConnectionStringBuilder
-				{
-					DataSource = "(local)",
-					UserID = "bob",
-					Password = "hunter2",
-					InitialCatalog = "Adventure Works"
-				};
-			var connectionString = builder.ToString();
-			using (var connection = new SqlConnection(connectionString))
-			{
-				connection.Open();
-			}
-		}
-
-		[Test]
-		[ExpectedException(typeof (XmlException))]
-		public void Xml()
-		{
-			XDocument.Parse("{}");
-		}
+		#endregion
 
 		public IEnumerator GetEnumerator()
 		{
