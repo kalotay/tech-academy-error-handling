@@ -138,8 +138,10 @@ namespace ErrorHandling
 		[ExpectedException(typeof (AggregateException))]
 		public void Aggregate()
 		{
-			var task = Task.Run(() => { throw new Exception(); });
-			task.Wait();
+			var succesfulTask = Task.Run(() => { });
+			var failingTask = Task.Run(() => { throw new CustomException(); });
+			var tasks = Task.WhenAll(succesfulTask, failingTask);
+			tasks.Wait();
 		}
 
 		public IEnumerator GetEnumerator()
