@@ -9,5 +9,10 @@ namespace ErrorHandling
 
 		public CustomException()
 		{}
+
+		public static void Throw()
+		{
+			throw new CustomException();
+		}
 	}
 }

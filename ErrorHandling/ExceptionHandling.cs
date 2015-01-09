@@ -9,17 +9,12 @@ namespace ErrorHandling
 		public class DerivedCustomException: CustomException
 		{}
 
-		private static void Throw()
-		{
-			throw new CustomException();
-		}
-
 		[Test]
 		public void CatchAll()
 		{
 			try
 			{
-				Throw();
+				CustomException.Throw();
 			}
 			catch
 			{
@@ -31,7 +26,7 @@ namespace ErrorHandling
 		{
 			try
 			{
-				Throw();
+				CustomException.Throw();
 			}
 			catch(Exception e)
 			{
@@ -44,7 +39,7 @@ namespace ErrorHandling
 		{
 			try
 			{
-				Throw();
+				CustomException.Throw();
 			}
 			catch(CustomException e)
 			{
@@ -58,7 +53,7 @@ namespace ErrorHandling
 		{
 			try
 			{
-				Throw();
+				CustomException.Throw();
 			}
 			catch(DerivedCustomException e)
 			{
@@ -72,7 +67,7 @@ namespace ErrorHandling
 			var catchCount = 0;
 			try
 			{
-				Throw();
+				CustomException.Throw();
 			}
 			catch (CustomException)
 			{
@@ -89,14 +84,14 @@ namespace ErrorHandling
 		public void StackPreservation()
 		{
 			var exception = Assert.Catch<CustomException>(PreserveStack);
-			Assert.That(exception.StackTrace, Is.StringContaining("Throw()"));
+			Assert.That(exception.StackTrace, Is.StringContaining("CustomException.Throw()"));
 		}
 
 		[Test]
 		public void StackLoss()
 		{
 			var exception = Assert.Catch<CustomException>(LoseStack);
-			Assert.That(exception.StackTrace, Is.Not.StringContaining("Throw()"));
+			Assert.That(exception.StackTrace, Is.Not.StringContaining("CustomException.Throw()"));
 		}
 
 		[Test]
@@ -107,11 +102,11 @@ namespace ErrorHandling
 			Assert.That(exception.InnerException.StackTrace, Is.StringContaining("Throw()"));
 		}
 
-		private void WrapStack()
+		private static void WrapStack()
 		{
 			try
 			{
-				Throw();
+				CustomException.Throw();
 			}
 			catch (CustomException e)
 			{
@@ -119,11 +114,11 @@ namespace ErrorHandling
 			}
 		}
 
-		private void LoseStack()
+		private static void LoseStack()
 		{
 			try
 			{
-				Throw();
+				CustomException.Throw();
 			}
 			catch (CustomException e)
 			{
@@ -131,11 +126,11 @@ namespace ErrorHandling
 			}
 		}
 
-		private void PreserveStack()
+		private static void PreserveStack()
 		{
 			try
 			{
-				Throw();
+				CustomException.Throw();
 			}
 			catch (CustomException)
 			{

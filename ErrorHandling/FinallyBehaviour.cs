@@ -50,7 +50,7 @@ namespace ErrorHandling
 		{
 			try
 			{
-				throw new CustomException();
+				CustomException.Throw();
 			}
 			catch(CustomException)
 			{}
@@ -69,7 +69,7 @@ namespace ErrorHandling
 			{
 				try
 				{
-					throw new CustomException();
+					CustomException.Throw();
 				}
 				finally
 				{
@@ -91,7 +91,7 @@ namespace ErrorHandling
 			{
 				using(this)
 				{
-					throw new CustomException();
+					CustomException.Throw();
 				}
 			}
 			catch (Exception)
