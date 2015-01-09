@@ -48,6 +48,13 @@ namespace ErrorHandling
 			Assert.That(exception.InnerException, Is.Null);
 		}
 
+		[Test]
+		[ExpectedException(typeof (AssertionException))]
+		public void NUnitUsesExceptions()
+		{
+			Assert.Fail();
+		}
+
 		private static void Throw()
 		{
 			throw new CustomException();
