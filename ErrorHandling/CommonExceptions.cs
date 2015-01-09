@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
 using NUnit.Framework;
 
 namespace ErrorHandling
@@ -142,6 +147,50 @@ namespace ErrorHandling
 			var failingTask = Task.Run(() => { throw new CustomException(); });
 			var tasks = Task.WhenAll(succesfulTask, failingTask);
 			tasks.Wait();
+		}
+
+		[Test]
+		[ExpectedException(typeof (WebException))]
+		public void Web()
+		{
+			var request = WebRequest.Create("http://localhost:10000");
+			using (request.GetResponse())
+			{}
+		}
+
+		[Test]
+		[ExpectedException(typeof (SocketException))]
+		public void Socket()
+		{
+			using (var socket = new Socket(SocketType.Stream, ProtocolType.IP))
+			{
+				socket.Connect("localhost", 10000);
+			}
+		}
+
+		[Test]
+		[ExpectedException(typeof (SqlException))]
+		public void Sql()
+		{
+			var builder = new SqlConnectionStringBuilder
+				{
+					DataSource = "(local)",
+					UserID = "bob",
+					Password = "hunter2",
+					InitialCatalog = "Adventure Works"
+				};
+			var connectionString = builder.ToString();
+			using (var connection = new SqlConnection(connectionString))
+			{
+				connection.Open();
+			}
+		}
+
+		[Test]
+		[ExpectedException(typeof (XmlException))]
+		public void Xml()
+		{
+			XDocument.Parse("{}");
 		}
 
 		public IEnumerator GetEnumerator()
