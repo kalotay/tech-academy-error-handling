@@ -61,6 +61,7 @@
     <Compile Include="FinallyBehaviour.cs" />
     <Compile Include="IterativeSquareRoot.cs" />
     <Compile Include="NUnitExceptionTesting.cs" />
+    <Compile Include="OtherPatterns.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SevendigitalApiCall.cs" />
   </ItemGroup>
